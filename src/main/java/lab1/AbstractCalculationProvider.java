@@ -5,7 +5,7 @@ import lab1.bean.CalculationResult;
 
 public abstract class AbstractCalculationProvider {
 
-    public static AbstractCalculationProvider provider;
+    private static AbstractCalculationProvider provider;
 
     protected AbstractCalculationProvider() {
     }
@@ -17,6 +17,6 @@ public abstract class AbstractCalculationProvider {
         return provider;
     }
 
-    abstract CalculationResult performCalculation(CalculationRequest request);
+    public abstract CalculationResult performCalculation(CalculationRequest request);
 
 }
