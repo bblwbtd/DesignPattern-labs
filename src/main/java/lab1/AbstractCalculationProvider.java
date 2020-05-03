@@ -18,6 +18,6 @@ public abstract class AbstractCalculationProvider {
         return provider;
     }
 
-    abstract CalculationResult performCalculation(CalculationRequest request);
+    public abstract CalculationResult performCalculation(CalculationRequest request);
 
 }

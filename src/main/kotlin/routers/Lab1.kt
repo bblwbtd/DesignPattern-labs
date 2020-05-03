@@ -8,7 +8,7 @@ import lab1.AbstractCalculationProvider
 import lab1.bean.CalculationRequest
 import vertx
 
-val Lab1Router: Router = Router.router(vertx).apply {
+val lab1Router: Router = Router.router(vertx).apply {
     route().handler(BodyHandler.create())
     post("/calculate").handler(::calculate)
 
