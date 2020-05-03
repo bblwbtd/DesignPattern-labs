@@ -1,11 +1,11 @@
 package lab1.bean;
-
 import java.util.List;
 
-public class CalculationResult {
-    public List<MonthlyDetail> result;
 
-    public CalculationResult(List<MonthlyDetail> result) {
+public class CalculationResult {
+    public List<Payment> result;
+
+    public CalculationResult(List<Payment> result) {
         this.result = result;
     }
 }

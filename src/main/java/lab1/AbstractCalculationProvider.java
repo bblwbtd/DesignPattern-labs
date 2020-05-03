@@ -1,11 +1,12 @@
 package lab1;
 
+
 import lab1.bean.CalculationRequest;
 import lab1.bean.CalculationResult;
 
 public abstract class AbstractCalculationProvider {
 
-    private static AbstractCalculationProvider provider;
+    public static AbstractCalculationProvider provider;
 
     protected AbstractCalculationProvider() {
     }
@@ -17,6 +18,6 @@ public abstract class AbstractCalculationProvider {
         return provider;
     }
 
-    public abstract CalculationResult performCalculation(CalculationRequest request);
+    abstract CalculationResult performCalculation(CalculationRequest request);
 
 }
