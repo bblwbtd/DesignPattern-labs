@@ -1,11 +1,11 @@
 package routers
 
-import extension.respondJson
 import io.vertx.reactivex.ext.web.Router
 import io.vertx.reactivex.ext.web.RoutingContext
 import io.vertx.reactivex.ext.web.handler.BodyHandler
 import lab1.AbstractCalculationProvider
 import lab1.bean.CalculationRequest
+import respondJson
 import vertx
 
 val lab1Router: Router = Router.router(vertx).apply {

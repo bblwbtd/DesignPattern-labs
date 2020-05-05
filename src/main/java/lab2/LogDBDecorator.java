@@ -2,6 +2,7 @@ package lab2;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class LogDBDecorator extends AbstractDBDecorator {
     @Override
     public void insert(String tableName, String[] row) {
         String log = String.format("%s insert operation, table name: %s, row data: %s",
-                getCurrentTime(), tableName, row);
+                getCurrentTime(), tableName, Arrays.toString(row));
         logs.add(log);
         super.insert(tableName, row);
     }

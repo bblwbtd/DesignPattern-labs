@@ -13,7 +13,7 @@ val apiRouter: Router = Router.router(vertx).apply {
 
 val router: Router = Router.router(vertx).apply {
     errorHandler(500) {
-        println(it.failure().localizedMessage)
+        it.failure().printStackTrace()
     }
     route("/*").handler(StaticHandler.create("static"))
     mountSubRouter("/api", apiRouter)
@@ -29,3 +29,4 @@ fun startUpHttpService(config: HttpServiceConfig) {
         }
     }
 }
+

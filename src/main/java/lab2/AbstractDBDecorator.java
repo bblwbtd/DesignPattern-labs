@@ -1,7 +1,7 @@
 package lab2;
 
 public class AbstractDBDecorator extends DB {
-    private final DB db;
+    protected final DB db;
 
     public AbstractDBDecorator(DB db) {
         this.db = db;
