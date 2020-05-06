@@ -24,7 +24,7 @@ public class AmortizedMortgageStrategy implements Strategy{
             double interest = (double) Math.round(currentLoan * this.monthRate * 100) / 100;
             remainMonth = remainMonth - 1;
             currentLoan = currentLoan - (redemption - interest);
-            paymentList.add(i,new Payment(redemption, interest,remainMonth));
+            paymentList.add(i,new Payment(redemption, currentLoan,interest,remainMonth));
         }
         return paymentList;
     }

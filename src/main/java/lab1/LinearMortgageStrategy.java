@@ -20,7 +20,7 @@ public class LinearMortgageStrategy implements Strategy {
             double redemption = (double) Math.round((interest + everyMonthPayBack) * 100) / 100;
             currentLoan = currentLoan - everyMonthPayBack;
             remainMonth = remainMonth - 1;
-            paymentList.add(i,new Payment(redemption, interest,remainMonth));
+            paymentList.add(i,new Payment(redemption, currentLoan,interest,remainMonth));
 
         }
         return paymentList;
