@@ -1,4 +1,4 @@
-package lab3.Bean;
+package lab3.bean;
 
 public class SimulatorConfig {
     public int elevator_speed = 3;

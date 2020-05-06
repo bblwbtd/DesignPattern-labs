@@ -1,6 +1,6 @@
 package lab3;
 
-import lab3.Bean.SimulatorConfig;
+import lab3.bean.SimulatorConfig;
 import lab3.exceptions.WrongOperationException;
 import lab3.states.*;
 
@@ -30,11 +30,9 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
         return doorMotor;
     }
 
-
     public void setCurrentFloor(int currentFloor) {
         this.currentFloor = currentFloor;
     }
-
 
     public ElevatorState getState() {
         return state;
@@ -54,14 +52,6 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
 
     public boolean isMoving() {
         return (state instanceof MovingUpState) || (state instanceof MovingDownState);
-    }
-
-    public boolean isDoorOpening() {
-        return state instanceof OpeningDoorState;
-    }
-
-    public boolean isDoorClosing() {
-        return state instanceof ClosingDoorState;
     }
 
     @Override
@@ -111,7 +101,7 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
     }
 
     @Override
-    public void FloorChanged() {
+    public void floorChanged() {
         if (state instanceof MovingUpState) {
             currentFloor++;
         } else if (state instanceof MovingDownState) {

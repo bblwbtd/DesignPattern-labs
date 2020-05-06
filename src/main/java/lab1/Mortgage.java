@@ -21,8 +21,8 @@ public final class Mortgage {
     //    public Mortgage(String startDate, String endDate, int initialLoan, double rate, String strategy) {
     public Mortgage(CalculationRequest request) {
         super();
-        this.startDate = request.startDate;
-        this.endDate = request.endDate;
+        this.startDate = request.start_date;
+        this.endDate = request.end_date;
         this.initialLoan = Double.parseDouble(request.initial_amount);
         this.currentLoan = Double.parseDouble(request.initial_amount);
         this.rate = Double.parseDouble(request.interest_rate);

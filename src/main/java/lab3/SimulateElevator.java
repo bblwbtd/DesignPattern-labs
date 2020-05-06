@@ -1,7 +1,7 @@
 package lab3;
 
 import io.reactivex.Observable;
-import lab3.Bean.SimulatorConfig;
+import lab3.bean.SimulatorConfig;
 import lab3.exceptions.WrongOperationException;
 
 import java.util.concurrent.TimeUnit;
@@ -12,19 +12,30 @@ public class SimulateElevator {
     private final ControlPanel controlPanel = new ControlPanel();
     private final ElevatorMotor elevatorMotor;
     private final DoorMotor doorMotor;
-    private final ElevatorController controller;
+    private ElevatorController controller;
     private final SimulatorConfig config;
+
 
     public SimulateElevator(SimulatorConfig config) {
         this.config = config;
         elevatorMotor = new ElevatorMotor(this);
         doorMotor = new DoorMotor(this);
-        controller = new ElevatorController(elevatorMotor, doorMotor, config);
+    }
+
+    public ElevatorMotor getElevatorMotor() {
+        return elevatorMotor;
+    }
+
+    public DoorMotor getDoorMotor() {
+        return doorMotor;
+    }
+
+    public void setController(ElevatorController controller) {
+        this.controller = controller;
         doorSensor.addListener(controller);
         floorSensor.addListeners(controller);
         controlPanel.addListener(controller);
     }
-
 
     public void pressFloorButton(int floor) throws WrongOperationException {
         controlPanel.pressFloorButton(floor);
@@ -42,7 +53,7 @@ public class SimulateElevator {
     public void simulateLightSignal() {
         Observable.just(this).delay(config.elevator_speed, TimeUnit.SECONDS).map(simulateElevator -> {
             if (controller.isMoving()) {
-                simulateElevator.getFloorSensor().sendFloorChangeSignal();
+                floorSensor.sendFloorChangeSignal();
             }
             return this;
         }).repeatUntil(() -> !this.getController().isMoving()).subscribe();
@@ -50,26 +61,6 @@ public class SimulateElevator {
 
     public void simulateDoorBlocked() {
         doorSensor.sendDoorBlockedSignal();
-    }
-
-    public DoorSensor getDoorSensor() {
-        return doorSensor;
-    }
-
-    public FloorSensor getFloorSensor() {
-        return floorSensor;
-    }
-
-    public ElevatorMotor getElevatorMotor() {
-        return elevatorMotor;
-    }
-
-    public DoorMotor getDoorMotor() {
-        return doorMotor;
-    }
-
-    public ControlPanel getControlPanel() {
-        return controlPanel;
     }
 
     public ElevatorController getController() {

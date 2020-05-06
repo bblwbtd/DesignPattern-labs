@@ -13,7 +13,7 @@ public class FloorSensor {
     public void sendFloorChangeSignal() {
         System.out.println("the floor has changed");
         for (FloorSensorListener listener : listeners) {
-            listener.FloorChanged();
+            listener.floorChanged();
         }
     }
 }
