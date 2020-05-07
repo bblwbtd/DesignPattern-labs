@@ -4,29 +4,33 @@ package lab1;
 import lab1.bean.CalculationRequest;
 import lab1.bean.Payment;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public final class Mortgage {
-    private final double initialLoan;
-    private final double currentLoan;
-    private final int month;
-    private final double rate;
+    private double initialLoan;
+    private double currentLoan;
+    private int month;
+    private double rate;
     private String thisMonth;
-    private final List<Payment> paymentList;
+    private List<Payment> paymentList;
     Strategy strategy;
-    private final String startDate;
-    private final String endDate;
+    private String startDate;
+    private String endDate;
 
     //    public Mortgage(String startDate, String endDate, int initialLoan, double rate, String strategy) {
-    public Mortgage(CalculationRequest request) {
+    public Mortgage(CalculationRequest request) throws ParseException {
         super();
-        this.startDate = request.start_date;
-        this.endDate = request.end_date;
+        this.startDate = request.startDate;
+        this.endDate = request.endDate;
         this.initialLoan = Double.parseDouble(request.initial_amount);
         this.currentLoan = Double.parseDouble(request.initial_amount);
         this.rate = Double.parseDouble(request.interest_rate);
-        this.month = (Integer.parseInt(endDate.substring(0, 4)) - Integer.parseInt(startDate.substring(0, 4))) * 12;
+//        this.month = (Integer.parseInt(endDate.substring(0, 4)) - Integer.parseInt(startDate.substring(0, 4))) * 12;
+        this.month = calculateMonth(startDate,endDate);
         this.paymentList = new ArrayList<Payment>(this.month);
         if (request.strategy.equals("Amortized")) {
             strategy = new AmortizedMortgageStrategy();
@@ -35,8 +39,25 @@ public final class Mortgage {
         }
     }
 
-    public List<Payment> calculate() {
+    public List<Payment> calculate() throws ParseException {
         return strategy.calculate(this);
+    }
+
+    int calculateMonth(String startDate,String endDate) throws ParseException {
+        int result = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+
+        c1.setTime(sdf.parse(startDate));
+        c2.setTime(sdf.parse(endDate));
+
+        result = c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH);
+        int month = (c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12;
+        return month + result + 1 ;
+
+
     }
 
     public double getInitialLoan() {
