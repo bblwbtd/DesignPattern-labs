@@ -4,6 +4,7 @@ import lab1.bean.CalculationRequest;
 import lab1.bean.Payment;
 import org.junit.jupiter.api.Test;
 
+import java.text.ParseException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,8 +15,8 @@ public class AmortizedMortgageStrategyTest {
     AmortizedMortgageStrategy strategy = new AmortizedMortgageStrategy();
 
     @Test
-    void testCalculate(){
-        List<Payment> result = strategy.calculate(new Mortgage(new CalculationRequest("2010-5-1","2050-5-1","3000000","0.06","Amortized")));
+    void testCalculate() throws ParseException {
+        List<Payment> result = strategy.calculate(new Mortgage(new CalculationRequest("2010-05","2050-04","3000000","0.06","Amortized")));
         assertEquals(16506.41,result.get(0).getRedemption());
         assertEquals(16506.41,result.get(1).getRedemption());
         assertEquals(2998493.59,result.get(0).getRest());
@@ -25,5 +26,7 @@ public class AmortizedMortgageStrategyTest {
         assertEquals(480, result.size());
         assertEquals(1,result.get(result.size() - 2).getRemainMonth());
         assertEquals(0,result.get(result.size() - 1).getRemainMonth());
+        assertEquals("2050-04",result.get(result.size() - 1).getThisMonth());
+        assertEquals("2010-05",result.get(0).getThisMonth());
     }
 }

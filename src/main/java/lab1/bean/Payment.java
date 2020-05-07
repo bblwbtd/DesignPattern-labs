@@ -5,17 +5,25 @@ public class Payment {
     private double interest;
     private String date;
     private int remainMonth;
+    private String thisMonth;
     private double rest;
 
-    public Payment(double redemption,double rest, double interest, int remainMonth) {
+
+
+    public Payment(double redemption, double rest, double interest, int remainMonth, String thisMonth) {
         this.redemption = redemption;
         this.rest = rest;
         this.interest = interest;
+        this.thisMonth = thisMonth;
         this.remainMonth = remainMonth;
     }
 
     public double getRest() {
         return rest;
+    }
+
+    public String getThisMonth() {
+        return thisMonth;
     }
 
     public double getRedemption() {

@@ -4,6 +4,8 @@ package lab1;
 import lab1.bean.CalculationRequest;
 import lab1.bean.CalculationResult;
 
+import java.text.ParseException;
+
 public abstract class AbstractCalculationProvider {
 
     public static AbstractCalculationProvider provider;
@@ -18,6 +20,6 @@ public abstract class AbstractCalculationProvider {
         return provider;
     }
 
-    public abstract CalculationResult performCalculation(CalculationRequest request);
+    public abstract CalculationResult performCalculation(CalculationRequest request) throws ParseException;
 
 }
