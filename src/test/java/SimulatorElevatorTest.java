@@ -12,100 +12,102 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimulatorElevatorTest {
 
-    @Test
-    void testMoveUp() throws WrongOperationException, InterruptedException {
+
+    private SimulateElevator initialElevator() {
         SimulatorConfig config = new SimulatorConfig();
         SimulateElevator simulateElevator = new SimulateElevator(config);
         ElevatorController controller = new ElevatorController(simulateElevator.getElevatorMotor(), simulateElevator.getDoorMotor(), config);
         simulateElevator.setController(controller);
+        return simulateElevator;
+    }
+
+    @Test
+    void testMoveUp() throws WrongOperationException, InterruptedException {
+        SimulateElevator simulateElevator = initialElevator();
         simulateElevator.pressFloorButton(3);
-        Observable<SimulateElevator> observable = Observable.just(simulateElevator).map(s -> {
+        Observable.just(simulateElevator).map(s -> {
             assertTrue(s.getController().getState() instanceof MovingUpState);
             return simulateElevator;
         }).delay(7, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpeningDoorState);
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
+            System.out.println(s.getController().getState() instanceof DoorOpeningState);
             return simulateElevator;
         }).delay(3, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpenedDoorState);
+            System.out.println(s.getController().getState());
+            System.out.println(s.getController().getState() instanceof DoorOpenedState);
+            assertTrue(s.getController().getState() instanceof DoorOpenedState);
             return simulateElevator;
-        });
-        observable.test().assertNoErrors().await();
+        }).test().await().assertNoErrors();
     }
 
     @Test
     void testMoveDown() throws WrongOperationException, InterruptedException {
-        SimulatorConfig config = new SimulatorConfig();
-        SimulateElevator simulateElevator = new SimulateElevator(config);
-        ElevatorController controller = new ElevatorController(simulateElevator.getElevatorMotor(), simulateElevator.getDoorMotor(), config);
-        simulateElevator.setController(controller);
+        SimulateElevator simulateElevator = initialElevator();
         simulateElevator.getController().setCurrentFloor(3);
         simulateElevator.pressFloorButton(1);
-        Observable<SimulateElevator> observable = Observable.just(simulateElevator).map(s -> {
+        Observable.just(simulateElevator).map(s -> {
             assertTrue(s.getController().getState() instanceof MovingDownState);
             return simulateElevator;
         }).delay(7, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpeningDoorState);
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
             return simulateElevator;
-        }).delay(3, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpenedDoorState);
+        }).delay(4, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorOpenedState);
             return simulateElevator;
-        });
-        observable.test().assertNoErrors().await();
+        }).test().await().assertNoErrors();
     }
 
     @Test
     void testPressCloseDoorButton() throws InterruptedException {
-        SimulatorConfig config = new SimulatorConfig();
-        SimulateElevator simulateElevator = new SimulateElevator(config);
-        ElevatorController controller = new ElevatorController(simulateElevator.getElevatorMotor(), simulateElevator.getDoorMotor(), config);
-        simulateElevator.setController(controller);
-        simulateElevator.getController().setState(new OpenedDoorState(simulateElevator.getController()));
+        SimulateElevator simulateElevator = initialElevator();
+        simulateElevator.getController().setState(new DoorOpenedState(simulateElevator.getController()));
         simulateElevator.pressCloseDoorButton();
-        Observable<SimulateElevator> observable = Observable.just(simulateElevator).map(s -> {
-            assertTrue(s.getController().getState() instanceof ClosingDoorState);
+        Observable.just(simulateElevator).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorClosingState);
             return simulateElevator;
         }).delay(4, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof ClosedDoorState);
+            assertTrue(s.getController().getState() instanceof DoorClosedState);
             return simulateElevator;
-        });
-        observable.test().assertNoErrors().await();
+        }).test().await().assertNoErrors();
     }
 
     @Test
     void testPressOpenDoorButton() throws InterruptedException {
-        SimulatorConfig config = new SimulatorConfig();
-        SimulateElevator simulateElevator = new SimulateElevator(config);
-        ElevatorController controller = new ElevatorController(simulateElevator.getElevatorMotor(), simulateElevator.getDoorMotor(), config);
-        simulateElevator.setController(controller);
-        simulateElevator.getController().setState(new ClosedDoorState(simulateElevator.getController()));
+        SimulateElevator simulateElevator = initialElevator();
+        simulateElevator.getController().setState(new DoorClosedState(simulateElevator.getController()));
         simulateElevator.pressOpenDoorButton();
-        Observable<SimulateElevator> observable = Observable.just(simulateElevator).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpeningDoorState);
+        Observable.just(simulateElevator).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
             return simulateElevator;
         }).delay(4, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpenedDoorState);
+            assertTrue(s.getController().getState() instanceof DoorOpenedState);
             return simulateElevator;
-        });
-        observable.test().assertNoErrors().await();
+        }).test().await().assertNoErrors();
     }
 
     @Test
     void testSimulateDoorBlocked() throws InterruptedException {
-        SimulatorConfig config = new SimulatorConfig();
-        SimulateElevator simulateElevator = new SimulateElevator(config);
-        ElevatorController controller = new ElevatorController(simulateElevator.getElevatorMotor(), simulateElevator.getDoorMotor(), config);
-        simulateElevator.setController(controller);
-        simulateElevator.getController().setState(new OpenedDoorState(simulateElevator.getController()));
+        SimulateElevator simulateElevator = initialElevator();
+        simulateElevator.getController().setState(new DoorOpenedState(simulateElevator.getController()));
         simulateElevator.pressCloseDoorButton();
-        Observable<SimulateElevator> observable = Observable.just(simulateElevator).delay(1, TimeUnit.SECONDS).map(s -> {
+        Observable.just(simulateElevator).delay(1, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorClosingState);
             s.simulateDoorBlocked();
-            assertTrue(s.getController().getState() instanceof OpeningDoorState);
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
             return s;
-        }).delay(2, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof OpenedDoorState);
+        }).delay(5, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorOpenedState);
             return s;
-        });
-        observable.test().assertNoErrors().await();
+        }).test().await().assertNoErrors();
 
+    }
+
+    @Test
+    void testAutoClose() throws InterruptedException {
+        SimulateElevator simulateElevator = initialElevator();
+        simulateElevator.getController().setState(new DoorOpenedState(simulateElevator.getController()));
+        Observable.empty().delay(6, TimeUnit.SECONDS).doOnComplete(() -> {
+            assertTrue(simulateElevator.getController().getState() instanceof DoorClosingState);
+        }).test().await().assertNoErrors();
     }
 }

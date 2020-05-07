@@ -1,0 +1,1 @@
+class Session(val id: String)

@@ -1,0 +1,1 @@
+class Response(val data: Any?, val code: Int)

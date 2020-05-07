@@ -1,10 +1,7 @@
 package lab3;
 
-import io.reactivex.Observable;
 import lab3.bean.SimulatorConfig;
 import lab3.exceptions.WrongOperationException;
-
-import java.util.concurrent.TimeUnit;
 
 public class SimulateElevator {
     private final DoorSensor doorSensor = new DoorSensor();
@@ -15,6 +12,18 @@ public class SimulateElevator {
     private ElevatorController controller;
     private final SimulatorConfig config;
 
+
+    public DoorSensor getDoorSensor() {
+        return doorSensor;
+    }
+
+    public FloorSensor getFloorSensor() {
+        return floorSensor;
+    }
+
+    public SimulatorConfig getConfig() {
+        return config;
+    }
 
     public SimulateElevator(SimulatorConfig config) {
         this.config = config;
@@ -39,7 +48,6 @@ public class SimulateElevator {
 
     public void pressFloorButton(int floor) throws WrongOperationException {
         controlPanel.pressFloorButton(floor);
-        simulateLightSignal();
     }
 
     public void pressCloseDoorButton() {
@@ -50,14 +58,6 @@ public class SimulateElevator {
         controlPanel.pressOpenButton();
     }
 
-    public void simulateLightSignal() {
-        Observable.just(this).delay(config.elevator_speed, TimeUnit.SECONDS).map(simulateElevator -> {
-            if (controller.isMoving()) {
-                floorSensor.sendFloorChangeSignal();
-            }
-            return this;
-        }).repeatUntil(() -> !this.getController().isMoving()).subscribe();
-    }
 
     public void simulateDoorBlocked() {
         doorSensor.sendDoorBlockedSignal();

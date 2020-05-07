@@ -19,5 +19,11 @@ public abstract class ElevatorState {
 
     public abstract void MoveDown();
 
-    public abstract void StopMoving();
+    public abstract void reachedFloor();
+
+    public abstract void doorOpened();
+
+    public abstract void doorClosed();
+
+    public abstract void pressFloorButton(int floor);
 }

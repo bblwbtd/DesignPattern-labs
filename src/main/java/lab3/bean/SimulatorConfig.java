@@ -4,6 +4,17 @@ public class SimulatorConfig {
     public int elevator_speed = 3;
     public int door_speed = 3;
     public int max_floor = 10;
+    public int door_max_idle_time = 5;
+
+
+    public int getDoor_max_idle_time() {
+        return door_max_idle_time;
+    }
+
+    public void setDoor_max_idle_time(int door_max_idle_time) {
+        this.door_max_idle_time = door_max_idle_time;
+    }
+
 
     public int getElevator_speed() {
         return elevator_speed;

@@ -8,47 +8,47 @@ import lab3.bean.SimulatorConfig
 
 class SimulateControllerProxy(elevatorMotor: ElevatorMotor, doorMotor: DoorMotor, config: SimulatorConfig) : ElevatorController(elevatorMotor, doorMotor, config) {
 
-    val channel = Channel<SimulateElevatorMessage>()
+    val channel = Channel<SimulateElevatorMessage>(10)
 
     override fun floorChanged() {
         GlobalScope.launch {
-            channel.send(SimulateElevatorMessage.FLOOR_CHANGE)
             super.floorChanged()
+            channel.send(SimulateElevatorMessage.FLOOR_CHANGE)
         }
     }
 
     override fun moveDown() {
         GlobalScope.launch {
-            channel.send(SimulateElevatorMessage.MOVE_DOWN)
             super.moveDown()
+            channel.send(SimulateElevatorMessage.MOVE_DOWN)
         }
     }
 
     override fun moveUp() {
         GlobalScope.launch {
-            channel.send(SimulateElevatorMessage.MOVE_UP)
             super.moveUp()
+            channel.send(SimulateElevatorMessage.MOVE_UP)
         }
     }
 
     override fun doorBlocked() {
         GlobalScope.launch {
-            channel.send(SimulateElevatorMessage.DOOR_BLOCKED)
             super.doorBlocked()
+            channel.send(SimulateElevatorMessage.DOOR_BLOCKED)
         }
     }
 
     override fun doorOpened() {
         GlobalScope.launch {
-            channel.send(SimulateElevatorMessage.DOOR_OPENED)
             super.doorOpened()
+            channel.send(SimulateElevatorMessage.DOOR_OPENED)
         }
     }
 
     override fun doorClosed() {
         GlobalScope.launch {
-            channel.send(SimulateElevatorMessage.DOOR_CLOSED)
             super.doorClosed()
+            channel.send(SimulateElevatorMessage.DOOR_CLOSED)
         }
     }
 

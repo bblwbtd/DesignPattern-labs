@@ -4,9 +4,10 @@ import lab3.ElevatorController;
 
 import java.util.List;
 
-public class MovingDownState extends ElevatorState {
+public class DoorOpeningState extends ElevatorState {
 
-    public MovingDownState(ElevatorController controller) {
+
+    public DoorOpeningState(ElevatorController controller) {
         super(controller);
     }
 
@@ -17,7 +18,9 @@ public class MovingDownState extends ElevatorState {
 
     @Override
     public void closeDoor() {
-
+        controller.getDoorMotor().stop();
+        controller.getDoorMotor().close();
+        controller.setState(new DoorClosingState(controller));
     }
 
     @Override
@@ -37,19 +40,13 @@ public class MovingDownState extends ElevatorState {
 
     @Override
     public void reachedFloor() {
-        controller.setCurrentFloor(controller.getCurrentFloor() - 1);
-        List<Integer> targetFloors = controller.getTargetFloors();
-        if (targetFloors.contains(controller.getCurrentFloor())) {
-            targetFloors.removeIf(integer -> integer.equals(controller.getCurrentFloor()));
-            controller.setState(new DoorOpeningState(controller));
-            controller.getDoorMotor().open();
-            controller.getElevatorMotor().stop();
-        }
+
     }
 
     @Override
     public void doorOpened() {
-
+        controller.getDoorMotor().stop();
+        controller.setState(new DoorOpenedState(controller));
     }
 
     @Override
@@ -60,6 +57,9 @@ public class MovingDownState extends ElevatorState {
     @Override
     public void pressFloorButton(int floor) {
         List<Integer> floors = controller.getTargetFloors();
+        if (floor == controller.getCurrentFloor()) {
+            return;
+        }
         if (!floors.contains(floor)) {
             floors.add(floor);
         }

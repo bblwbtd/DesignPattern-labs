@@ -2,15 +2,27 @@ package lab3;
 
 import lab3.bean.SimulatorConfig;
 import lab3.exceptions.WrongOperationException;
-import lab3.states.*;
+import lab3.states.DoorClosedState;
+import lab3.states.ElevatorState;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class ElevatorController implements DoorSensorListener, FloorSensorListener, ControlPanelListener {
     private final ElevatorMotor elevatorMotor;
     private final DoorMotor doorMotor;
     private final SimulatorConfig config;
-    private ElevatorState state = new ClosedDoorState(this);
+    private final List<Integer> targetFloors = new LinkedList<>();
     private int currentFloor = 1;
-    private int targetFloor = 1;
+    private ElevatorState state = new DoorClosedState(this);
+
+    public int getCurrentFloor() {
+        return currentFloor;
+    }
+
+    public List<Integer> getTargetFloors() {
+        return targetFloors;
+    }
 
     public ElevatorController(ElevatorMotor elevatorMotor, DoorMotor doorMotor, SimulatorConfig config) {
         this.elevatorMotor = elevatorMotor;
@@ -46,12 +58,8 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
         state.MoveUp();
     }
 
-    public void moveDown() throws WrongOperationException {
+    public void moveDown() {
         state.MoveDown();
-    }
-
-    public boolean isMoving() {
-        return (state instanceof MovingUpState) || (state instanceof MovingDownState);
     }
 
     @Override
@@ -61,33 +69,18 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
 
     @Override
     public void doorOpened() {
-        if (state instanceof OpeningDoorState) {
-            setState(new OpenedDoorState(this));
-            doorMotor.stop();
-        }
+        state.doorOpened();
     }
 
     @Override
     public void doorClosed() {
-        if (state instanceof ClosingDoorState) {
-            setState(new ClosedDoorState(this));
-            doorMotor.stop();
-        }
+        state.doorClosed();
     }
 
     @Override
     public void pressFloorButton(int floor) throws WrongOperationException {
         if (floor > config.max_floor || floor < 1) throw new WrongOperationException();
-        targetFloor = floor;
-        if (currentFloor < floor) {
-            moveUp();
-        } else if (currentFloor > floor) {
-            moveDown();
-        } else {
-            if ((state instanceof ClosingDoorState) || (state instanceof ClosedDoorState)) {
-                setState(new OpeningDoorState(this, config.door_speed));
-            }
-        }
+        state.pressFloorButton(floor);
     }
 
     @Override
@@ -102,14 +95,6 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
 
     @Override
     public void floorChanged() {
-        if (state instanceof MovingUpState) {
-            currentFloor++;
-        } else if (state instanceof MovingDownState) {
-            currentFloor--;
-        }
-        if (currentFloor == targetFloor) {
-            state = new ClosedDoorState(this);
-            state.openDoor();
-        }
+        state.reachedFloor();
     }
 }
