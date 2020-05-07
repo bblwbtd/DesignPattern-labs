@@ -11,6 +11,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
+import io.ktor.websocket.WebSockets
 import routers.mountLab1Router
 import routers.mountLab2Router
 import routers.mountLab3Router
@@ -20,6 +21,7 @@ val server = embeddedServer(Netty, config.port, config.host) {
     install(Sessions) {
         cookie<Session>("huaq")
     }
+    install(WebSockets)
     routing {
         route("/api") {
             mountLab1Router()
