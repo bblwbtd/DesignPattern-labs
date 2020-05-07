@@ -17,14 +17,16 @@ public class AmortizedMortgageStrategy implements Strategy{
         int remainMonth = mortgage.getMonth();
         int m = mortgage.getMonth();
         double initial = mortgage.getInitialLoan();
-        double redemption = (double) Math.round(initial * (this.monthRate * Math.pow(this.monthRate + 1, m) / (Math.pow(1 + this.monthRate,m) - (1))) * 100) / 100;
+        double redemption = initial * (this.monthRate * Math.pow(this.monthRate + 1, m) / (Math.pow(1 + this.monthRate,m) - (1)));
         double currentLoan = mortgage.getCurrentLoan();
 
         for(int i=0;i<mortgage.getMonth();i++) {
-            double interest = (double) Math.round(currentLoan * this.monthRate * 100) / 100;
+            double interest = currentLoan * this.monthRate;
             remainMonth = remainMonth - 1;
             currentLoan = currentLoan - (redemption - interest);
-            paymentList.add(i,new Payment(redemption, currentLoan,interest,remainMonth));
+            paymentList.add(i,new Payment((double) Math.round(redemption * 100) / 100,
+                                            (double) Math.round(currentLoan * 100) / 100,
+                                        (double) Math.round(interest * 100) / 100,remainMonth));
         }
         return paymentList;
     }

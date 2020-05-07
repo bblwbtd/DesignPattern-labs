@@ -13,15 +13,16 @@ public class LinearMortgageStrategy implements Strategy {
         List<Payment> paymentList = new ArrayList<Payment>(mortgage.getMonth());
         int remainMonth = mortgage.getMonth();
         double currentLoan = mortgage.getCurrentLoan();
-        double everyMonthPayBack = (double) Math.round(mortgage.getInitialLoan()/mortgage.getMonth()* 100) / 100;
+        double everyMonthPayBack = mortgage.getInitialLoan()/mortgage.getMonth();
 
         for(int i=0;i<mortgage.getMonth();i++) {
-            double interest = (double) Math.round(currentLoan * monthRate * 100) / 100;
-            double redemption = (double) Math.round((interest + everyMonthPayBack) * 100) / 100;
+            double interest = currentLoan * monthRate;
+            double redemption = interest + everyMonthPayBack;
             currentLoan = currentLoan - everyMonthPayBack;
             remainMonth = remainMonth - 1;
-            paymentList.add(i,new Payment(redemption, currentLoan,interest,remainMonth));
-
+            paymentList.add(i,new Payment((double) Math.round(redemption * 100) / 100,
+                    (double) Math.round(currentLoan * 100) / 100,
+                    (double) Math.round(interest * 100) / 100,remainMonth));
         }
         return paymentList;
     }

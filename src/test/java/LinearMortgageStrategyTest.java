@@ -21,7 +21,7 @@ public class LinearMortgageStrategyTest {
         assertEquals(2995000,result.get(0).getRest());
         assertEquals(2990000,result.get(1).getRest());
         assertTrue(result.get(result.size() - 2).getRest() > 0);
-        assertTrue(result.get(result.size() - 1).getRest() <= 0);
+        assertTrue(result.get(result.size() - 1).getRest() == 0);
         assertEquals(600, result.size());
         assertEquals(1,result.get(result.size() - 2).getRemainMonth());
         assertEquals(0,result.get(result.size() - 1).getRemainMonth());
