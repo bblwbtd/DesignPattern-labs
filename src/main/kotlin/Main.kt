@@ -1,3 +1,6 @@
-fun main() {
-    server.start(true)
+object Main {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        server.start(true)
+    }
 }

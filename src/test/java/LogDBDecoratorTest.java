@@ -13,8 +13,8 @@ public class LogDBDecoratorTest {
     private final String tableName1 = "testTable1";
 
     LogDBDecoratorTest() {
-        decorator.createTable(tableName, 10);
-        decorator.createTable(tableName1, 10);
+        decorator.createTable(tableName, 2);
+        decorator.createTable(tableName1, 2);
     }
 
     private boolean checkLogs(String keyword) {
@@ -24,7 +24,7 @@ public class LogDBDecoratorTest {
 
     @Test
     void testCreateTable() {
-        decorator.createTable("test", 10);
+        decorator.createTable("test", 2);
         assertTrue(checkLogs("create table"));
     }
 
