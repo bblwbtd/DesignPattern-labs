@@ -115,10 +115,12 @@ public class SimulatorElevatorTest {
     @Test
     void testSimulateDoorBlocked() throws InterruptedException {
         SimulateElevator simulateElevator = initialElevator();
-        simulateElevator.getController().setState(new DoorOpenedState(simulateElevator.getController()));
-        simulateElevator.pressCloseDoorButton();
+        simulateElevator.pressOpenDoorButton();
         Observable.just(simulateElevator).delay(1, TimeUnit.SECONDS).map(s -> {
-            assertTrue(s.getController().getState() instanceof DoorClosingState);
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
+            s.pressCloseDoorButton();
+            return s;
+        }).map(s ->{
             s.simulateDoorBlocked();
             assertTrue(s.getController().getState() instanceof DoorOpeningState);
             return s;
