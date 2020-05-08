@@ -59,6 +59,11 @@ public class DoorClosingState extends ElevatorState {
     }
 
     @Override
+    public void doorBlocked() {
+        openDoor();
+    }
+
+    @Override
     public void pressFloorButton(int floor) {
         List<Integer> floors = controller.getTargetFloors();
         if (controller.getCurrentFloor() == floor) {

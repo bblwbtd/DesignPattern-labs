@@ -13,7 +13,7 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
     private final DoorMotor doorMotor;
     private final SimulatorConfig config;
     private final List<Integer> targetFloors = new LinkedList<>();
-    private int currentFloor = 1;
+    protected int currentFloor = 1;
     private ElevatorState state = new DoorClosedState(this);
 
     public int getCurrentFloor() {
@@ -64,7 +64,7 @@ public class ElevatorController implements DoorSensorListener, FloorSensorListen
 
     @Override
     public void doorBlocked() {
-        state.openDoor();
+        state.doorBlocked();
     }
 
     @Override

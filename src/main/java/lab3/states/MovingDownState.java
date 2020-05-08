@@ -58,6 +58,11 @@ public class MovingDownState extends ElevatorState {
     }
 
     @Override
+    public void doorBlocked() {
+
+    }
+
+    @Override
     public void pressFloorButton(int floor) {
         List<Integer> floors = controller.getTargetFloors();
         if (!floors.contains(floor)) {

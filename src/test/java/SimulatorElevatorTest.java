@@ -1,5 +1,4 @@
 import io.reactivex.Observable;
-import lab3.ElevatorController;
 import lab3.SimulateElevator;
 import lab3.bean.SimulatorConfig;
 import lab3.exceptions.WrongOperationException;
@@ -8,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimulatorElevatorTest {
@@ -16,8 +16,6 @@ public class SimulatorElevatorTest {
     private SimulateElevator initialElevator() {
         SimulatorConfig config = new SimulatorConfig();
         SimulateElevator simulateElevator = new SimulateElevator(config);
-        ElevatorController controller = new ElevatorController(simulateElevator.getElevatorMotor(), simulateElevator.getDoorMotor(), config);
-        simulateElevator.setController(controller);
         return simulateElevator;
     }
 
@@ -30,7 +28,6 @@ public class SimulatorElevatorTest {
             return simulateElevator;
         }).delay(7, TimeUnit.SECONDS).map(s -> {
             assertTrue(s.getController().getState() instanceof DoorOpeningState);
-            System.out.println(s.getController().getState() instanceof DoorOpeningState);
             return simulateElevator;
         }).delay(3, TimeUnit.SECONDS).map(s -> {
             System.out.println(s.getController().getState());
@@ -38,6 +35,36 @@ public class SimulatorElevatorTest {
             assertTrue(s.getController().getState() instanceof DoorOpenedState);
             return simulateElevator;
         }).test().await().assertNoErrors();
+    }
+
+    @Test
+    void testMoveUpMultiFloor() throws WrongOperationException, InterruptedException {
+        SimulateElevator simulateElevator = initialElevator();
+        simulateElevator.pressFloorButton(3);
+        simulateElevator.pressFloorButton(4);
+        simulateElevator.pressFloorButton(6);
+        Observable.just(simulateElevator).map(s -> {
+            assertTrue(s.getController().getState() instanceof MovingUpState);
+            return simulateElevator;
+        }).delay(7, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
+            assertEquals(3, s.getController().getCurrentFloor());
+            return simulateElevator;
+        }).delay(3, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorOpenedState);
+            return simulateElevator;
+        }).delay(5, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorClosingState);
+            return simulateElevator;
+        }).delay(3, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof MovingUpState);
+            return simulateElevator;
+        }).delay(3, TimeUnit.SECONDS).map(s -> {
+            assertTrue(s.getController().getState() instanceof DoorOpeningState);
+            assertEquals(4, s.getController().getCurrentFloor());
+            return simulateElevator;
+        }).test().await().assertNoErrors();
+
     }
 
     @Test

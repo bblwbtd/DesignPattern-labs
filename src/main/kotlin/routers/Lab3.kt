@@ -1,8 +1,8 @@
 package routers
 
 import Session
-import SimulateControllerProxy
 import bodyAsJson
+import gson
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.cio.websocket.Frame
@@ -13,15 +13,18 @@ import io.ktor.routing.route
 import io.ktor.sessions.get
 import io.ktor.sessions.getOrSet
 import io.ktor.sessions.sessions
-import io.ktor.sessions.set
 import io.ktor.websocket.WebSocketServerSession
 import io.ktor.websocket.webSocket
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import lab3.SimulateElevator
 import lab3.bean.PressFloorButtonRequest
 import lab3.bean.SimulatorConfig
+import lab3.events.ElevatorEvent
 import respondSuccess
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.collections.set
 
 fun Route.mountLab3Router() {
     route("/lab3") {
@@ -59,6 +62,13 @@ fun Route.mountLab3Router() {
                 call.respondSuccess()
             }
         }
+
+        post("/block") {
+            getElevator(call).apply {
+                simulateDoorBlocked()
+                call.respondSuccess()
+            }
+        }
     }
 }
 
@@ -66,18 +76,12 @@ val elevatorStorage = HashMap<String, SimulateElevator>()
 
 fun getElevator(call: ApplicationCall, config: SimulatorConfig = SimulatorConfig()): SimulateElevator {
     var session = call.sessions.get<Session>()
-    if (session == null) {
-        session = Session(UUID.randomUUID().toString())
-        call.sessions.set(session)
-        return createElevator(call, config)
-    }
-    return elevatorStorage[session.id]!!
+    return elevatorStorage[session!!.id]!!
 }
 
 fun createElevator(call: ApplicationCall, config: SimulatorConfig): SimulateElevator {
     val session = call.sessions.get<Session>()
     return SimulateElevator(config).apply {
-        controller = SimulateControllerProxy(elevatorMotor, doorMotor, config)
         elevatorStorage[session!!.id] = this
     }
 }
@@ -88,19 +92,20 @@ suspend fun initialWebSocket(session: WebSocketServerSession) {
     session.apply {
         call.sessions.getOrSet {
             Session(UUID.randomUUID().toString())
-        }.let {
-            websocketConnection[it.id]?.close()
-            websocketConnection[it.id] = this
+        }.let { session ->
+            websocketConnection[session.id]?.close()
+            websocketConnection[session.id] = this
             val elevator = getElevator(call)
-            val proxy = elevator.controller as SimulateControllerProxy
-            try {
-                for (data in proxy.channel) {
-                    outgoing.send(Frame.Text(data.name))
+            outgoing.send(Frame.Text("233"))
+            val channel = Channel<ElevatorEvent>(10)
+            elevator.addListener {
+                launch {
+                    channel.send(it)
                 }
-            } catch (e: Exception) {
-                websocketConnection.remove(it.id)
             }
-
+            for (data in channel) {
+                outgoing.send(Frame.Text(gson.toJson(data)))
+            }
         }
     }
 }

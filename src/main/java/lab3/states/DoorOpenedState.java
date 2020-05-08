@@ -42,6 +42,7 @@ public class DoorOpenedState extends ElevatorState {
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
+        controller.getDoorMotor().stop();
         controller.getDoorMotor().close();
         controller.setState(new DoorClosingState(controller));
     }
@@ -73,6 +74,11 @@ public class DoorOpenedState extends ElevatorState {
 
     @Override
     public void doorClosed() {
+
+    }
+
+    @Override
+    public void doorBlocked() {
 
     }
 

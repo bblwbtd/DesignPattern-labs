@@ -25,5 +25,7 @@ public abstract class ElevatorState {
 
     public abstract void doorClosed();
 
+    public abstract void doorBlocked();
+
     public abstract void pressFloorButton(int floor);
 }

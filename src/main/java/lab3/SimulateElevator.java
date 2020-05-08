@@ -1,7 +1,12 @@
 package lab3;
 
+import io.reactivex.Single;
 import lab3.bean.SimulatorConfig;
+import lab3.events.ElevatorEvent;
 import lab3.exceptions.WrongOperationException;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class SimulateElevator {
     private final DoorSensor doorSensor = new DoorSensor();
@@ -9,8 +14,9 @@ public class SimulateElevator {
     private final ControlPanel controlPanel = new ControlPanel();
     private final ElevatorMotor elevatorMotor;
     private final DoorMotor doorMotor;
-    private ElevatorController controller;
+    private final ElevatorController controller;
     private final SimulatorConfig config;
+    private final List<SimulateElevatorListener> listenerList = new LinkedList<>();
 
 
     public DoorSensor getDoorSensor() {
@@ -29,6 +35,10 @@ public class SimulateElevator {
         this.config = config;
         elevatorMotor = new ElevatorMotor(this);
         doorMotor = new DoorMotor(this);
+        this.controller = new ElevatorController(elevatorMotor, doorMotor, config);
+        doorSensor.addListener(controller);
+        floorSensor.addListeners(controller);
+        controlPanel.addListener(controller);
     }
 
     public ElevatorMotor getElevatorMotor() {
@@ -39,12 +49,6 @@ public class SimulateElevator {
         return doorMotor;
     }
 
-    public void setController(ElevatorController controller) {
-        this.controller = controller;
-        doorSensor.addListener(controller);
-        floorSensor.addListeners(controller);
-        controlPanel.addListener(controller);
-    }
 
     public void pressFloorButton(int floor) throws WrongOperationException {
         controlPanel.pressFloorButton(floor);
@@ -67,4 +71,13 @@ public class SimulateElevator {
         return controller;
     }
 
+    public void broadCastEvents(ElevatorEvent event) {
+        Single.just(event).doOnSuccess(e -> {
+            listenerList.forEach(listener -> listener.Receive(e));
+        }).subscribe();
+    }
+
+    public void addListener(SimulateElevatorListener listener) {
+        listenerList.add(listener);
+    }
 }

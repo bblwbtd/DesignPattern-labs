@@ -11,26 +11,26 @@ import java.util.Calendar;
 import java.util.List;
 
 public final class Mortgage {
-    private double initialLoan;
-    private double currentLoan;
-    private int month;
-    private double rate;
+    private final double initialLoan;
+    private final double currentLoan;
+    private final int month;
+    private final double rate;
     private String thisMonth;
-    private List<Payment> paymentList;
+    private final List<Payment> paymentList;
     Strategy strategy;
-    private String startDate;
-    private String endDate;
+    private final String startDate;
+    private final String endDate;
 
     //    public Mortgage(String startDate, String endDate, int initialLoan, double rate, String strategy) {
     public Mortgage(CalculationRequest request) throws ParseException {
         super();
-        this.startDate = request.startDate;
-        this.endDate = request.endDate;
+        this.startDate = request.start_date;
+        this.endDate = request.end_date;
         this.initialLoan = Double.parseDouble(request.initial_amount);
         this.currentLoan = Double.parseDouble(request.initial_amount);
         this.rate = Double.parseDouble(request.interest_rate);
 //        this.month = (Integer.parseInt(endDate.substring(0, 4)) - Integer.parseInt(startDate.substring(0, 4))) * 12;
-        this.month = calculateMonth(startDate,endDate);
+        this.month = calculateMonth(startDate, endDate);
         this.paymentList = new ArrayList<Payment>(this.month);
         if (request.strategy.equals("Amortized")) {
             strategy = new AmortizedMortgageStrategy();
