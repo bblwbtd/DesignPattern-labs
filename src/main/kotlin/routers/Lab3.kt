@@ -80,9 +80,13 @@ fun getElevator(call: ApplicationCall, config: SimulatorConfig = SimulatorConfig
 }
 
 fun createElevator(call: ApplicationCall, config: SimulatorConfig): SimulateElevator {
-    val session = call.sessions.get<Session>()
+    var session = call.sessions.get<Session>()
+    if (session == null){
+        session = Session(UUID.randomUUID().toString())
+        call.sessions.set("huaq", session)
+    }
     return SimulateElevator(config).apply {
-        elevatorStorage[session!!.id] = this
+        elevatorStorage[session.id] = this
     }
 }
 

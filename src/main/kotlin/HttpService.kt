@@ -3,6 +3,10 @@ import config.getHttpServiceConfig
 import io.ktor.application.ApplicationCall
 import io.ktor.application.install
 import io.ktor.http.ContentType
+import io.ktor.http.content.default
+import io.ktor.http.content.files
+import io.ktor.http.content.static
+import io.ktor.http.content.staticRootFolder
 import io.ktor.request.receiveText
 import io.ktor.response.respondText
 import io.ktor.routing.route
@@ -15,6 +19,7 @@ import io.ktor.websocket.WebSockets
 import routers.mountLab1Router
 import routers.mountLab2Router
 import routers.mountLab3Router
+import java.io.File
 
 val config = getHttpServiceConfig()
 val server = embeddedServer(Netty, config.port, config.host) {
@@ -23,6 +28,26 @@ val server = embeddedServer(Netty, config.port, config.host) {
     }
     install(WebSockets)
     routing {
+        static {
+            staticRootFolder = File("dist")
+            default("index.html")
+        }
+
+        static("css") {
+            staticRootFolder = File("dist")
+            files("css")
+        }
+
+        static("js") {
+            staticRootFolder = File("dist")
+            files("js")
+        }
+
+        static("fonts") {
+            staticRootFolder = File("dist")
+            files("fonts")
+        }
+
         route("/api") {
             mountLab1Router()
             mountLab2Router()
